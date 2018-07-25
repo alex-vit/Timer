@@ -46,12 +46,12 @@ public class TimerRepository {
         }
 
         isRunning = true;
+        if (currentSeconds == 0) currentSeconds = initialSeconds;
 
         Disposable sub = countdown(currentSeconds)
                 .map(this::createTimerState)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onTimerNext, t -> {
-                }, this::onTimerComplete);
+                .subscribe(this::onTimerNext);
         subs.add(sub);
     }
 
@@ -76,18 +76,18 @@ public class TimerRepository {
     private void onTimerNext(TimerState nextState) {
         currentSeconds = nextState.getSeconds();
         timerState.onNext(nextState);
-    }
 
-    private void onTimerComplete() {
-        currentSeconds = 0;
-        timerState.onNext(TimerState.completed());
+        if (nextState instanceof TimerState.Completed) {
+            isRunning = false;
+            subs.clear();
+        }
     }
 
     private Observable<Integer> countdown(int from) {
         return Observable.interval(0, 1, SECONDS)
                 .map(passed -> from - passed.intValue())
                 .flatMap(seconds -> {
-                    if (seconds > 0) {
+                    if (seconds >= 0) {
                         return Observable.just(seconds);
                     } else {
                         return Observable.empty();
@@ -96,7 +96,7 @@ public class TimerRepository {
     }
 
     private TimerState createTimerState(int at) {
-        if (at < 1) throw new IllegalArgumentException("Handle timer 0 in countdown.onComplete");
+        if (at == 0) return TimerState.completed();
 
         if (isRunning) {
             return TimerState.running(at);

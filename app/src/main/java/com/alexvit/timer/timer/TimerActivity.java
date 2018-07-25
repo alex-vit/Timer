@@ -31,6 +31,8 @@ public class TimerActivity extends BaseActivity<TimerViewModel> {
 
     private Subscriber subscriber;
 
+    private Ringtone sound;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         subscriber = new Subscriber(getLifecycle());
@@ -75,6 +77,7 @@ public class TimerActivity extends BaseActivity<TimerViewModel> {
 
         boolean completed = state.timerState instanceof TimerState.Completed;
         if (completed) playSound();
+        else stopSound();
     }
 
     private void showSeconds(int currentSeconds) {
@@ -112,8 +115,15 @@ public class TimerActivity extends BaseActivity<TimerViewModel> {
 
     private void playSound() {
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-        r.play();
+        sound = RingtoneManager.getRingtone(getApplicationContext(), notification);
+        sound.play();
+    }
+
+    private void stopSound() {
+        if (sound != null) {
+            sound.stop();
+            sound = null;
+        }
     }
 
     private void showMinutesInputDialog() {
