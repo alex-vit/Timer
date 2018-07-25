@@ -6,10 +6,7 @@ import android.arch.lifecycle.OnLifecycleEvent;
 
 public abstract class BaseViewModel implements LifecycleObserver {
 
-    private final Lifecycle lifecycle;
-
     public BaseViewModel(Lifecycle lifecycle) {
-        this.lifecycle = lifecycle;
         lifecycle.addObserver(this);
     }
 

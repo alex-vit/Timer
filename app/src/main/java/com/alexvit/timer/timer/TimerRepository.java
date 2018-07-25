@@ -27,13 +27,12 @@ public class TimerRepository {
     }
 
     void setTimer(int to) {
-        stop();
-
         initialSeconds = to;
         currentSeconds = initialSeconds;
 
-        start();
-
+        boolean wasRunning = isRunning;
+        stop();
+        if (wasRunning) start();
     }
 
     boolean isReset() {
@@ -56,12 +55,7 @@ public class TimerRepository {
     }
 
     void stop() {
-        if (!isRunning) {
-            return;
-        }
-
         isRunning = false;
-
         subs.clear();
         timerState.onNext(TimerState.stopped(currentSeconds));
     }

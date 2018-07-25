@@ -13,9 +13,6 @@ import io.reactivex.subjects.BehaviorSubject;
 
 class TimerViewModel extends BaseViewModel {
 
-    private boolean showStart = true;
-    private boolean showReset = false;
-
     private final Subscriber subscriber;
     private final TimerRepository timer = App.getTimer();
 
@@ -53,6 +50,9 @@ class TimerViewModel extends BaseViewModel {
     }
 
     private void onTimerState(TimerState timerState) {
+        boolean showStart;
+        boolean showReset;
+
         if (timerState instanceof TimerState.Running) {
             showStart = false;
             showReset = true;

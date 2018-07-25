@@ -6,6 +6,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
@@ -36,7 +37,7 @@ public class TimerForegroundService extends IntentService {
             case ACTION_START:
                 Notification notification = buildNotification();
                 startForeground(ID_FOREGROUND, notification);
-                ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(ID_FOREGROUND, notification);
+                getNotificationManager().notify(ID_FOREGROUND, notification);
                 break;
             default:
                 stopForeground(true);
@@ -82,12 +83,17 @@ public class TimerForegroundService extends IntentService {
             String id = NAME;
             String name = "TimerForegroundService";
             NotificationChannel channel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH);
-            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            assert manager != null;
-            manager.createNotificationChannel(channel);
+            getNotificationManager().createNotificationChannel(channel);
             return id;
         }
         return null;
+    }
+
+    @NonNull
+    private NotificationManager getNotificationManager() {
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        assert manager != null;
+        return manager;
     }
 
 }

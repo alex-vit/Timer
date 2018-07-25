@@ -129,7 +129,7 @@ public class TimerActivity extends BaseActivity<TimerViewModel> {
 
     private void showMinutesInputDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = getLayoutInflater().inflate(R.layout.dialog_set_timer, null);
+        View view = View.inflate(this, R.layout.dialog_set_timer, null);
         builder.setTitle(R.string.dialog_set_timer)
                 .setView(view);
 
