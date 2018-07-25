@@ -34,7 +34,9 @@ public class TimerForegroundService extends IntentService {
         assert action != null;
         switch (action) {
             case ACTION_START:
-                startForeground(ID_FOREGROUND, buildNotification());
+                Notification notification = buildNotification();
+                startForeground(ID_FOREGROUND, notification);
+                ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(ID_FOREGROUND, notification);
                 break;
             default:
                 stopForeground(true);
@@ -58,12 +60,19 @@ public class TimerForegroundService extends IntentService {
     }
 
     private Notification buildNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NotificationCompat.CATEGORY_SERVICE);
-        builder.setOngoing(true).setContentTitle(getString(R.string.app_name));
+        NotificationCompat.Builder builder;
         String channelId = createChannel();
         if (channelId != null) {
-            builder.setChannelId(channelId);
+            builder = new NotificationCompat.Builder(this, channelId);
+        } else {
+            builder = new NotificationCompat.Builder(this);
         }
+        builder.setOngoing(true)
+                .setContentTitle(getString(R.string.app_name))
+                .setSmallIcon(android.R.drawable.stat_sys_warning);
+//        if (channelId != null) {
+//            builder.setChannelId(channelId);
+//        }
         return builder.build();
     }
 
