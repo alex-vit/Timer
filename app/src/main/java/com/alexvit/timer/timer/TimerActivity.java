@@ -66,8 +66,9 @@ public class TimerActivity extends BaseActivity<TimerViewModel> {
     }
 
     private void onUiState(TimerUiState state) {
-        boolean keepScreenOn = state.timerState instanceof TimerState.Running;
-        setKeepScreenOn(keepScreenOn);
+        boolean isRunning = state.timerState instanceof TimerState.Running;
+        setKeepScreenOn(isRunning);
+        updateService(isRunning);
 
         int seconds = state.timerState.getSeconds();
         showSeconds(seconds);
@@ -147,6 +148,14 @@ public class TimerActivity extends BaseActivity<TimerViewModel> {
         });
 
         dialog.show();
+    }
+
+    private void updateService(boolean isRunning) {
+        if (isRunning) {
+            TimerForegroundService.start(this);
+        } else {
+            TimerForegroundService.stop(this);
+        }
     }
 
 }
